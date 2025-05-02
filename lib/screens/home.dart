@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio/screens/chatscreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatelessWidget {
@@ -30,12 +31,9 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
-          TextButton(
-              onPressed: () {}, child: Text("Home", style: TextStyle(color: Colors.black))),
-          TextButton(
-              onPressed: () {}, child: Text("Work", style: TextStyle(color: Colors.black))),
-          TextButton(
-              onPressed: () {}, child: Text("Contact", style: TextStyle(color: Colors.black))),
+          TextButton(onPressed: () {}, child: Text("Home", style: TextStyle(color: Colors.black))),
+          TextButton(onPressed: () {}, child: Text("Work", style: TextStyle(color: Colors.black))),
+          TextButton(onPressed: () {}, child: Text("Contact", style: TextStyle(color: Colors.black))),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: ElevatedButton(
@@ -77,18 +75,9 @@ class HomePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.code, color: Color(0xFF63B3ED)),
-                    onPressed: () => _launchURL(githubUrl),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.work, color: Color(0xFF63B3ED)),
-                    onPressed: () => _launchURL(linkedinUrl),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.email, color: Color(0xFF63B3ED)),
-                    onPressed: () => _launchURL(emailUrl),
-                  ),
+                  IconButton(icon: Icon(Icons.code, color: Color(0xFF63B3ED)), onPressed: () => _launchURL(githubUrl)),
+                  IconButton(icon: Icon(Icons.work, color: Color(0xFF63B3ED)), onPressed: () => _launchURL(linkedinUrl)),
+                  IconButton(icon: Icon(Icons.email, color: Color(0xFF63B3ED)), onPressed: () => _launchURL(emailUrl)),
                 ],
               ),
               SizedBox(height: 200),
@@ -97,10 +86,8 @@ class HomePage extends StatelessWidget {
               Divider(),
               SizedBox(height: 60),
               Center(
-                child: Text(
-                  "Here’s how I can help you out !",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
+                child: Text("Here’s how I can help you out !",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               ),
               SizedBox(height: 10),
               Center(
@@ -114,37 +101,53 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 30),
-              
+
               // Service Cards
-             Wrap(
-  spacing: 16,
-  runSpacing: 16,
-  alignment: WrapAlignment.center,
-  children: services.map((service) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      clipBehavior: Clip.antiAlias, // Ensures rounded corners for image too
-      child: Container(
-        width: 150,
-        height: 150,
-        child: Image.asset(
-          service['image']!,
-          fit: BoxFit.cover, // Ma
-                        
-                      ),
-                    ),
-                  );
+              Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                alignment: WrapAlignment.center,
+                children: services.map((service) {
+                  return _HoverCard(imagePath: service['image']!);
                 }).toList(),
               ),
+
               SizedBox(height: 80),
             ],
+          ),
+
+          // Floating Chat Button
+          Positioned(
+            bottom: 30,
+            right: 30,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (_) => Align(
+      alignment: Alignment.bottomRight,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 80, right: 20),
+        child: Material(
+          type: MaterialType.transparency,
+          child: CocoBotChat(scrollController: ScrollController()),
+        ),
+      ),
+    ),
+  );
+              },
+              icon: Icon(Icons.chat,color: Colors.white,),
+              label: Text("Chat with Coco",style: TextStyle(color: Colors.white),),
+              backgroundColor: Color(0xFF63B3ED),
+            ),
           ),
         ],
       ),
     );
   }
 }
+
 
 class TrianglePainter extends CustomPainter {
   @override
@@ -164,4 +167,41 @@ class TrianglePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class _HoverCard extends StatefulWidget {
+  final String imagePath;
+  const _HoverCard({required this.imagePath});
+
+  @override
+  State<_HoverCard> createState() => _HoverCardState();
+}
+
+class _HoverCardState extends State<_HoverCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.2 : 1.0,
+        duration: Duration(milliseconds: 200),
+        child: Card(
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          clipBehavior: Clip.antiAlias,
+          child: Container(
+            width: 150,
+            height: 150,
+            child: Image.asset(
+              widget.imagePath,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
