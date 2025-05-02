@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'providers/gemini_provider.dart';
 
-const apiKey = 'AIzaSyC3XMBl2g3PwqqNw7RFsKWODSPvEBljjDA';
+const apiKey = 'insert-your-api-key';
 void main() {
   /// Initialize Gemini
   Gemini.init(apiKey: apiKey);
